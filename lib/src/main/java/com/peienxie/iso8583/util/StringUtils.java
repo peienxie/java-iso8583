@@ -24,29 +24,45 @@ public class StringUtils {
         '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
     };
 
-    public static String bytesToHexStr(byte[] bytes, int from, int to, boolean uppercase) {
-        if (to - from <= 0) return "";
+    public static byte[] bytesToHexBytes(byte[] bytes, int from, int to, boolean uppercase) {
+        if (to - from <= 0) return new byte[0];
 
         int len = to - from;
-        byte[] tmp = new byte[len * 2];
+        byte[] out = new byte[len * 2];
         byte[] digits = uppercase ? UPPERCASE_DIGITS : LOWERCASE_DIGITS;
         for (int i = 0; i < len; i++) {
             int v = bytes[i] & 0xff;
-            tmp[2 * i] = digits[v >>> 4];
-            tmp[2 * i + 1] = digits[v & 0x0f];
+            out[2 * i] = digits[v >>> 4];
+            out[2 * i + 1] = digits[v & 0x0f];
         }
-        return new String(tmp);
+        return out;
+    }
+
+    public static byte[] bytesToHexBytes(byte[] bytes) {
+        return bytesToHexBytes(bytes, 0, bytes.length, true);
+    }
+
+    public static byte[] bytesToHexBytes(byte[] bytes, int from, int to) {
+        return bytesToHexBytes(bytes, from, to, true);
+    }
+
+    public static byte[] bytesToHexBytes(byte[] bytes, boolean uppercase) {
+        return bytesToHexBytes(bytes, 0, bytes.length, uppercase);
+    }
+
+    public static String bytesToHexStr(byte[] bytes, int from, int to, boolean uppercase) {
+        return new String(bytesToHexBytes(bytes, from, to, uppercase));
     }
 
     public static String bytesToHexStr(byte[] bytes) {
-        return bytesToHexStr(bytes, 0, bytes.length, true);
+        return new String(bytesToHexBytes(bytes, 0, bytes.length, true));
     }
 
     public static String bytesToHexStr(byte[] bytes, int from, int to) {
-        return bytesToHexStr(bytes, from, to, true);
+        return new String(bytesToHexBytes(bytes, from, to, true));
     }
 
     public static String bytesToHexStr(byte[] bytes, boolean uppercase) {
-        return bytesToHexStr(bytes, 0, bytes.length, uppercase);
+        return new String(bytesToHexBytes(bytes, 0, bytes.length, uppercase));
     }
 }
