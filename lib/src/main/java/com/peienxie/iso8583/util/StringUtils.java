@@ -2,8 +2,16 @@ package com.peienxie.iso8583.util;
 
 public class StringUtils {
 
-    /* @param hexstring must be an even-length string. */
+    /**
+     * converts given hexadecimal string into byte array.
+     *
+     * @param hexstring must be an even-length string.
+     */
     public static byte[] hexStrToBytes(String hexstring) {
+        if ((hexstring.length() & 1) != 0)
+            throw new IllegalArgumentException(
+                    "input hexstring length not even: " + hexstring.length());
+
         int len = hexstring.length();
         byte[] bytes = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
