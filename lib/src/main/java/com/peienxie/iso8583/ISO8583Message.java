@@ -1,6 +1,6 @@
 package com.peienxie.iso8583;
 
-import com.peienxie.iso8583.encoder.ISO8583Encoder;
+import com.peienxie.iso8583.codec.encoders.ISO8583Encoder;
 import com.peienxie.iso8583.type.MTI;
 import com.peienxie.iso8583.type.TPDU;
 
