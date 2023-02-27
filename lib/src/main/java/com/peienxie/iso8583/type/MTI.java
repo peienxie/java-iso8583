@@ -1,9 +1,9 @@
 package com.peienxie.iso8583.type;
 
-import com.peienxie.iso8583.util.StringUtils;
-
 import java.nio.ByteBuffer;
 import java.text.ParseException;
+
+import com.peienxie.iso8583.util.StringUtils;
 
 /** MTI (Message Type Identifier) is a ISO8583 message type */
 public class MTI {

@@ -90,8 +90,8 @@ public class ISO8583Message {
         return fields[index - 1];
     }
 
-    public <T> ISO8583Message addField(int index, T data, FieldEncoder<T> encoder) {
-        return addField(index, ISO8583Field.request(data, encoder));
+    public <T> void addField(int index, T data, FieldEncoder<T> encoder) {
+        addField(index, ISO8583Field.request(data, encoder));
     }
 
     /**
@@ -101,15 +101,14 @@ public class ISO8583Message {
      * @param field the ISO8583Field data
      * @throws IllegalArgumentException when given index is not between 2 and 64
      */
-    public ISO8583Message addField(int index, ISO8583Field<?> field) {
+    public void addField(int index, ISO8583Field<?> field) {
         checkFieldIndex(index);
         this.fields[index - 1] = field;
-        return this;
     }
 
     private void checkFieldIndex(int index) {
-        if (index < 2 || index > 64) {
-            throw new IllegalArgumentException("the index number must be between 2 and 64");
+        if (index < 1 || index > 64) {
+            throw new IllegalArgumentException("the index number must be between 1 and 64");
         }
     }
 }

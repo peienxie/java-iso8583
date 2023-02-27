@@ -13,6 +13,24 @@ public class StringUtils {
     private StringUtils() {
     }
 
+
+    public static String bytesToHexStr(byte[] bytes, int offset, int length, boolean uppercase) {
+        return new String(bytesToHexBytes(bytes, offset, length, uppercase));
+    }
+
+    public static String bytesToHexStr(byte[] bytes) {
+        return new String(bytesToHexBytes(bytes, 0, bytes.length, true));
+    }
+
+    public static String bytesToHexStr(byte[] bytes, int offset, int length) {
+        return new String(bytesToHexBytes(bytes, offset, length, true));
+    }
+
+    public static String bytesToHexStr(byte[] bytes, boolean uppercase) {
+        return new String(bytesToHexBytes(bytes, 0, bytes.length, uppercase));
+    }
+
+
     public static byte[] bytesToHexBytes(byte[] bytes) {
         return bytesToHexBytes(bytes, 0, bytes.length, true);
     }

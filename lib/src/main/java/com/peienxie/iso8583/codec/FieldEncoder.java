@@ -1,7 +1,5 @@
 package com.peienxie.iso8583.codec;
 
-import java.nio.ByteBuffer;
-
 /**
  * An interface for encoding objects of type T into ISO8583 field as byte arrays.
  *

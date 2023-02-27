@@ -22,8 +22,7 @@ public class NumericEncoder implements FieldEncoder<Integer> {
     }
 
     private byte[] intToBcd(int value, int width) {
-        int size = Math.max(width, (int) Math.ceil(Math.log10(value + 1.0)));
-        byte[] bcd = new byte[(size + 1) / 2];
+        byte[] bcd = new byte[(width + 1) / 2];
         for (int i = bcd.length - 1; i >= 0 && value > 0; i--) {
             int digit1 = value % 10;
             value /= 10;

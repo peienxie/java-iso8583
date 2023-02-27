@@ -1,14 +1,16 @@
 package com.peienxie.iso8583.type;
 
-import com.peienxie.iso8583.util.StringUtils;
-
 import java.nio.ByteBuffer;
 import java.text.ParseException;
 
-/** TPDU (Transaction Protocol Data Unit) is a ISO8583 header */
+import com.peienxie.iso8583.util.StringUtils;
+
+/**
+ * TPDU (Transaction Protocol Data Unit) is a ISO8583 header
+ */
 public class TPDU {
+    private static final int id = 0x60;
     private final boolean isBinary;
-    private final int id = 0x60;
     private final int dst;
     private final int src;
 
@@ -18,12 +20,16 @@ public class TPDU {
         this.isBinary = isBinary;
     }
 
-    /** creates TPDU by given destination address which shoule be a base 16 integer */
+    /**
+     * creates TPDU by given destination address which shoule be a base 16 integer
+     */
     public static TPDU of(int dst) {
         return new TPDU(dst, 0, true);
     }
 
-    /** creates TPDU by given destination and source addresses which shoule be a base 16 integer */
+    /**
+     * creates TPDU by given destination and source addresses which shoule be a base 16 integer
+     */
     public static TPDU of(int dst, int src) {
         return new TPDU(dst, src, true);
     }
@@ -36,6 +42,7 @@ public class TPDU {
     public static TPDU of(int dst, int src, boolean isBinary) {
         return new TPDU(dst, src, isBinary);
     }
+
     /**
      * converts this TPDU data into a byte array with following Format. the actual length of output
      * data is depends on isBinary field.
@@ -48,11 +55,11 @@ public class TPDU {
      */
     public byte[] encode() {
         byte[] bytes = {
-            id,
-            (byte) ((this.dst >>> 8) & 0xff),
-            (byte) (this.dst & 0xff),
-            (byte) ((this.src >>> 8) & 0xff),
-            (byte) (this.src & 0xff)
+                id,
+                (byte) ((this.dst >>> 8) & 0xff),
+                (byte) (this.dst & 0xff),
+                (byte) ((this.src >>> 8) & 0xff),
+                (byte) (this.src & 0xff)
         };
         return isBinary ? bytes : StringUtils.bytesToHexBytes(bytes);
     }
@@ -69,16 +76,16 @@ public class TPDU {
         byte[] bytes = new byte[expectLength];
         buf.get(bytes);
 
-        int dst, src;
         if (isBinary) {
-            dst = bytes[1] << 8 | bytes[2];
-            src = bytes[3] << 8 | bytes[4];
+            int dst = bytes[1] << 8 | (bytes[2] & 0xff);
+            int src = bytes[3] << 8 | (bytes[4] & 0xff);
+            return TPDU.of(dst, src);
         } else {
             byte[] tmp = StringUtils.hexStrToBytes(new String(bytes));
-            dst = tmp[1] << 8 | tmp[2];
-            src = tmp[3] << 8 | tmp[4];
+            int dst = tmp[1] << 8 | (tmp[2] & 0xff);
+            int src = tmp[3] << 8 | (tmp[4] & 0xff);
+            return TPDU.of(dst, src);
         }
-        return TPDU.of(dst, src);
     }
 
     public TPDU parse(byte[] bytes) throws ParseException {
