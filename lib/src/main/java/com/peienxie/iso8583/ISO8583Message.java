@@ -2,17 +2,14 @@ package com.peienxie.iso8583;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.stream.IntStream;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.peienxie.iso8583.codec.FieldEncoder;
 import com.peienxie.iso8583.type.MTI;
 import com.peienxie.iso8583.type.TPDU;
 
 public class ISO8583Message {
-    /**
-     * The ISO8583 message fields.
-     */
-    private final ISO8583Field<?>[] fields;
     /**
      * The ISO8583 message TPDU (Transaction Protocol Data Unit)
      */
@@ -22,21 +19,13 @@ public class ISO8583Message {
      */
     private MTI mti;
 
-    public ISO8583Message() {
-        // only support primary bitmap, which is only 64 field items
-        this.fields = new ISO8583Field[64];
-    }
-
-    private byte[] createBitmap() {
-        byte[] bitmap = new byte[8];
-        IntStream.range(0, 64)
-                .filter(i -> this.fields[i] != null)
-                .forEachOrdered(i -> bitmap[i / 8] |= 1 << (7 - (i % 8)));
-        return bitmap;
-    }
+    /**
+     * The ISO8583 message fields.
+     */
+    private Map<Integer, ISO8583Field<?>> fieldMap = new TreeMap<>();
 
     /**
-     * Encodes all the fields in the message into a byte array.
+     * Encodes tpdu, mti, and all the fields in this message into a byte array.
      *
      * @return a byte array containing the encoded form of the message
      * @throws IllegalStateException if any field does not have an encoder
@@ -51,11 +40,14 @@ public class ISO8583Message {
                 out.write(mti.encode());
             }
 
-            out.write(createBitmap());
-            for (ISO8583Field<?> field : fields) {
-                if (field != null) {
-                    out.write(field.encode());
-                }
+            byte[] bitmap = new byte[8];
+            fieldMap.keySet().stream()
+                    .map(i -> i - 1)
+                    .forEach(i -> bitmap[i / 8] |= 1 << (7 - (i % 8)));
+            out.write(bitmap);
+
+            for (Map.Entry<Integer, ISO8583Field<?>> entry : fieldMap.entrySet()) {
+                out.write(entry.getValue().encode());
             }
         } catch (IOException e) {
             throw new IllegalStateException("Should never happened when writing to a ByteArrayOutputStream.", e);
@@ -87,7 +79,7 @@ public class ISO8583Message {
      */
     public ISO8583Field<?> getField(int index) {
         checkFieldIndex(index);
-        return fields[index - 1];
+        return fieldMap.get(index);
     }
 
     public <T> void addField(int index, T data, FieldEncoder<T> encoder) {
@@ -103,7 +95,7 @@ public class ISO8583Message {
      */
     public void addField(int index, ISO8583Field<?> field) {
         checkFieldIndex(index);
-        this.fields[index - 1] = field;
+        fieldMap.put(index, field);
     }
 
     private void checkFieldIndex(int index) {
