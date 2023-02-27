@@ -44,9 +44,9 @@ public class TPDU {
      * is 0x8a90.
      *
      * <p>if isBinary is set to true then getBytes() will output a 5 bytes length byte array. or
-     * output a 10 bytes length hexstring when set to false.
+     * output a 10 bytes length hex string when set to false.
      */
-    public byte[] getBytes() {
+    public byte[] encode() {
         byte[] bytes = {
             id,
             (byte) ((this.dst >>> 8) & 0xff),
@@ -54,7 +54,7 @@ public class TPDU {
             (byte) ((this.src >>> 8) & 0xff),
             (byte) (this.src & 0xff)
         };
-        return isBinary ? bytes : StringUtils.bytesToHexStr(bytes).getBytes();
+        return isBinary ? bytes : StringUtils.bytesToHexBytes(bytes);
     }
 
     public TPDU parse(ByteBuffer buf) throws ParseException {

@@ -35,9 +35,9 @@ public class MTI {
      * <p>if isBinary is set to true then getBytes() will output a 2 bytes length byte array. or
      * output a 4 bytes length hexstring when set to false.
      */
-    public byte[] getBytes() {
+    public byte[] encode() {
         byte[] bytes = {(byte) ((this.value >>> 8) & 0xff), (byte) (value & 0xff)};
-        return isBinary ? bytes : StringUtils.bytesToHexStr(bytes).getBytes();
+        return isBinary ? bytes : StringUtils.bytesToHexBytes(bytes);
     }
 
     public MTI parse(ByteBuffer buf) throws ParseException {

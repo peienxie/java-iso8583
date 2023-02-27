@@ -1,88 +1,96 @@
 package com.peienxie.iso8583;
 
-import com.peienxie.iso8583.codec.decoders.AlphaDecoder;
-import com.peienxie.iso8583.codec.decoders.ISO8583Decoder;
-import com.peienxie.iso8583.codec.decoders.NumericDecoder;
-import com.peienxie.iso8583.codec.encoders.AlphaEncoder;
-import com.peienxie.iso8583.codec.encoders.ISO8583Encoder;
-import com.peienxie.iso8583.codec.encoders.NumericEncoder;
-
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
+import java.io.InputStream;
+import java.util.StringJoiner;
 
+import com.peienxie.iso8583.codec.FieldDecoder;
+import com.peienxie.iso8583.codec.FieldEncoder;
+
+/**
+ * This class represents an ISO8583 field with data, encoder and decoder.
+ *
+ * @param <T> the type of data to be encoded and decoded
+ */
 public class ISO8583Field<T> {
-    private final ISO8583Type type;
-    private final T data;
-    private final ISO8583Encoder<T> encoder;
-    private final ISO8583Decoder<T> decoder;
 
-    private ISO8583Field(
-            ISO8583Type type, T data, ISO8583Encoder<T> encoder, ISO8583Decoder<T> decoder) {
-        this.type = type;
+    private final FieldEncoder<T> encoder;
+    private final FieldDecoder<T> decoder;
+
+    private T data;
+
+    /**
+     * Constructs a new ISO8583Field object with the specified data, encoder, and decoder.
+     *
+     * @param data    the data to be encoded and decoded
+     * @param encoder the encoder to be used for encoding the data
+     * @param decoder the decoder to be used for decoding the data
+     */
+    public ISO8583Field(T data, FieldEncoder<T> encoder, FieldDecoder<T> decoder) {
         this.data = data;
         this.encoder = encoder;
         this.decoder = decoder;
     }
 
-    public static ISO8583Field<String> ofText(String data, int formatLength) {
-        return new ISO8583Field<>(
-                ISO8583Type.ALPHA,
-                data,
-                AlphaEncoder.withLength(formatLength),
-                AlphaDecoder.withLength(formatLength));
+    /**
+     * Creates a new ISO8583Field object for a request message with the specified data and encoder.
+     *
+     * @param data    the data to be encoded
+     * @param encoder the encoder to be used for encoding the data
+     * @return a new ISO8583Field object for the request message
+     */
+    public static <T> ISO8583Field<T> request(T data, FieldEncoder<T> encoder) {
+        return new ISO8583Field<>(data, encoder, null);
     }
 
-    public static ISO8583Field<Integer> ofInteger(Integer data, int formatLength) {
-        return new ISO8583Field<Integer>(
-                ISO8583Type.NUMERIC,
-                data,
-                NumericEncoder.withLength(formatLength),
-                NumericDecoder.withLength(formatLength));
+    /**
+     * Creates a new ISO8583Field object for a response message with the specified decoder.
+     *
+     * @param decoder the decoder to be used for decoding the response data
+     * @return a new ISO8583Field object for the response message
+     */
+    public static <T> ISO8583Field<T> response(FieldDecoder<T> decoder) {
+        return new ISO8583Field<>(null, null, decoder);
     }
 
-    public static <T> ISO8583Field<T> of(ISO8583Type type, T data, ISO8583Encoder<T> encoder) {
-        return new ISO8583Field<T>(type, data, encoder, null);
-    }
-
-    public static <T> ISO8583Field<T> of(ISO8583Type type, T data, ISO8583Decoder<T> decoder) {
-        return new ISO8583Field<T>(type, data, null, decoder);
-    }
-
-    public static <T> ISO8583Field<T> of(
-            ISO8583Type type, T data, ISO8583Encoder<T> encoder, ISO8583Decoder<T> decoder) {
-        return new ISO8583Field<T>(type, data, encoder, decoder);
-    }
-
-    public void writeTo(OutputStream out) throws IOException {
-        out.write(getBytes());
-    }
-
-    /** converts this ISO8583Field into byte array */
-    public byte[] getBytes() {
+    /**
+     * Writes the encoded form of this ISO8583 field to the specified byte buffer.
+     *
+     * @throws IllegalStateException if the encoder is null
+     */
+    public byte[] encode() {
         if (encoder == null) {
-            throw new IllegalStateException("can't encode this field without a encoder");
+            throw new IllegalStateException("Encoder is null.");
         }
 
-        byte[] bytes = encoder.encode(data);
-        if (type.isVariableLength()) {
-            // write the variable length of fields first
-            byte[] varLen = type.getVariableLengthBytes(bytes.length);
-            return ByteBuffer.allocate(varLen.length + bytes.length).put(varLen).put(bytes).array();
+        return encoder.encode(data);
+    }
+
+    /**
+     * Reads the encoded form of this object from the specified byte buffer and
+     * updates the state of this object.
+     * <p>
+     * The position of the byte buffer is updated to reflect the number of bytes read.
+     *
+     * @throws IllegalStateException if the decoder is null
+     */
+    public void readFrom(InputStream inputStream) throws IOException {
+        if (decoder == null) {
+            throw new IllegalStateException("Decoder is null.");
         }
-        return bytes;
+
+
+        byte[] bytes = new byte[decoder.getDecodeLength()];
+        inputStream.read(bytes);
+        data = decoder.decode(bytes);
     }
 
     @Override
     public String toString() {
-        return "ISO8583Field{type="
-                + type
-                + ", data="
-                + data
-                + ", encoder="
-                + encoder
-                + ", decoder="
-                + decoder
-                + "}";
+        return new StringJoiner(", ", ISO8583Field.class.getSimpleName() + "[", "]")
+                .add("encoder=" + encoder)
+                .add("decoder=" + decoder)
+                .add("data=" + data)
+                .toString();
     }
 }
