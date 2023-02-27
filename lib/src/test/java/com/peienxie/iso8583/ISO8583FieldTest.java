@@ -64,12 +64,10 @@ public class ISO8583FieldTest {
         @Parameterized.Parameters
         public static Collection<Object[]> data() {
             return Arrays.asList(new Object[][]{
-                    {123, 2, "23"},
-                    {123, 10, "0000000123"},
-                    {12345, 5, "012345"},
-                    {12345, 6, "012345"},
-                    {12345, 7, "00012345"},
-                    {12345, 8, "00012345"},
+                    {123, 1, "23"},
+                    {123, 5, "0000000123"},
+                    {12345, 3, "012345"},
+                    {12345, 4, "00012345"},
             });
         }
 

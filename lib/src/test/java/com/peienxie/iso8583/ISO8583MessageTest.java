@@ -94,15 +94,15 @@ public class ISO8583MessageTest {
     @Test
     public void createFields() {
         ISO8583Message msg = new ISO8583Message();
-        msg.addField(3, 920000, new NumericEncoder(6));
-        msg.addField(4, 12300, new NumericEncoder(12));
-        msg.addField(11, 23, new NumericEncoder(6));
+        msg.addField(3, 920000, new NumericEncoder(3));
+        msg.addField(4, 12300, new NumericEncoder(6));
+        msg.addField(11, 23, new NumericEncoder(3));
 
         LocalDateTime now = LocalDateTime.of(2022, 10, 11, 12,34, 56);
         FieldEncoder<LocalDateTime> dateEncoder = new FieldEncoder<LocalDateTime>() {
             @Override
             public int getEncodeLength() {
-                return 4;
+                return 2;
             }
 
             @Override
@@ -113,7 +113,7 @@ public class ISO8583MessageTest {
         FieldEncoder<LocalDateTime> timeEncoder = new FieldEncoder<LocalDateTime>() {
             @Override
             public int getEncodeLength() {
-                return 6;
+                return 3;
             }
 
             @Override
