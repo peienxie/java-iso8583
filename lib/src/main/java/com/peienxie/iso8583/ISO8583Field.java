@@ -25,7 +25,7 @@ public class ISO8583Field<T> {
      * @param encoder the encoder to be used for encoding the data
      * @param decoder the decoder to be used for decoding the data
      */
-    public ISO8583Field(T data, FieldEncoder<T> encoder, FieldDecoder<T> decoder) {
+    private ISO8583Field(T data, FieldEncoder<T> encoder, FieldDecoder<T> decoder) {
         this.data = data;
         this.encoder = encoder;
         this.decoder = decoder;

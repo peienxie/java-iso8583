@@ -14,14 +14,14 @@ public class TPDU {
     }
 
     /**
-     * creates TPDU by given destination address which shoule be a base 16 integer
+     * creates TPDU by given destination address which should be a base 16 integer
      */
     public static TPDU of(int dst) {
         return new TPDU(dst, 0);
     }
 
     /**
-     * creates TPDU by given destination and source addresses which shoule be a base 16 integer
+     * creates TPDU by given destination and source addresses which should be a base 16 integer
      */
     public static TPDU of(int dst, int src) {
         return new TPDU(dst, src);

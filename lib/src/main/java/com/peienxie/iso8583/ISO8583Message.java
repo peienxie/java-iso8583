@@ -82,8 +82,9 @@ public class ISO8583Message {
         return fieldMap.get(index);
     }
 
-    public <T> void addField(int index, T data, FieldEncoder<T> encoder) {
+    public <T> ISO8583Message addField(int index, T data, FieldEncoder<T> encoder) {
         addField(index, ISO8583Field.request(data, encoder));
+        return this;
     }
 
     /**
