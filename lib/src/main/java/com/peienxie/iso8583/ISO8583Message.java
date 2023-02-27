@@ -108,7 +108,7 @@ public class ISO8583Message {
 
     private void checkFieldIndex(int index) {
         if (index < 1 || index > 64) {
-            throw new IllegalArgumentException("the index number must be between 1 and 64");
+            throw new IllegalArgumentException("The index number must be between 1 and 64");
         }
     }
 }

@@ -1,19 +1,21 @@
 package com.peienxie.iso8583.codec;
 
+import java.util.StringJoiner;
+
 public class NumericEncoder implements FieldEncoder<Integer> {
 
-    private final int formatLength;
+    private final int encodeLength;
 
-    public NumericEncoder(int formatLength) {
-        if (formatLength <= 0) {
-            throw new IllegalArgumentException("Illegal format length");
+    public NumericEncoder(int encodeLength) {
+        if (encodeLength <= 0) {
+            throw new IllegalArgumentException("Illegal length value");
         }
-        this.formatLength = formatLength;
+        this.encodeLength = encodeLength;
     }
 
     @Override
     public int getEncodeLength() {
-        return formatLength;
+        return encodeLength;
     }
 
     @Override
@@ -31,5 +33,12 @@ public class NumericEncoder implements FieldEncoder<Integer> {
             bcd[i] = (byte) ((digit2 << 4) | digit1);
         }
         return bcd;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", NumericEncoder.class.getSimpleName() + "[", "]")
+                .add("encodeLength=" + encodeLength)
+                .toString();
     }
 }

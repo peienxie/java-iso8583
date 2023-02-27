@@ -4,21 +4,22 @@ import static java.util.Arrays.copyOfRange;
 import static java.util.Arrays.fill;
 
 import java.nio.charset.StandardCharsets;
+import java.util.StringJoiner;
 
 public class AlphaEncoder implements FieldEncoder<String> {
 
-    private final int formatLength;
+    private final int encodeLength;
 
-    public AlphaEncoder(int formatLength) {
-        if (formatLength <= 0) {
-            throw new IllegalArgumentException("Illegal format length");
+    public AlphaEncoder(int encodeLength) {
+        if (encodeLength <= 0) {
+            throw new IllegalArgumentException("Illegal length value");
         }
-        this.formatLength = formatLength;
+        this.encodeLength = encodeLength;
     }
 
     @Override
     public int getEncodeLength() {
-        return formatLength;
+        return encodeLength;
     }
 
     @Override
@@ -33,5 +34,12 @@ public class AlphaEncoder implements FieldEncoder<String> {
         } else {
             return copyOfRange(dataBytes, 0, getEncodeLength());
         }
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", AlphaEncoder.class.getSimpleName() + "[", "]")
+                .add("encodeLength=" + encodeLength)
+                .toString();
     }
 }

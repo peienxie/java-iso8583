@@ -1,7 +1,6 @@
 package com.peienxie.iso8583;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.StringJoiner;
 
 import com.peienxie.iso8583.codec.FieldDecoder;
@@ -53,14 +52,30 @@ public class ISO8583Field<T> {
         return new ISO8583Field<>(null, null, decoder);
     }
 
+    public boolean hasEncoder() {
+        return encoder != null;
+    }
+
+    public boolean hasDecoder() {
+        return decoder != null;
+    }
+
+    public FieldDecoder<T> getDecoder() {
+        return decoder;
+    }
+
+    public T getData() {
+        return data;
+    }
+
     /**
      * Writes the encoded form of this ISO8583 field to the specified byte buffer.
      *
      * @throws IllegalStateException if the encoder is null
      */
     public byte[] encode() {
-        if (encoder == null) {
-            throw new IllegalStateException("Encoder is null.");
+        if (!hasEncoder()) {
+            throw new IllegalStateException("Encoder is null");
         }
 
         return encoder.encode(data);
@@ -74,14 +89,13 @@ public class ISO8583Field<T> {
      *
      * @throws IllegalStateException if the decoder is null
      */
-    public void readFrom(InputStream inputStream) throws IOException {
-        if (decoder == null) {
-            throw new IllegalStateException("Decoder is null.");
+    public void decode(ByteBuffer buffer) {
+        if (!hasDecoder()) {
+            throw new IllegalStateException("Decoder is null");
         }
 
-
         byte[] bytes = new byte[decoder.getDecodeLength()];
-        inputStream.read(bytes);
+        buffer.get(bytes);
         data = decoder.decode(bytes);
     }
 

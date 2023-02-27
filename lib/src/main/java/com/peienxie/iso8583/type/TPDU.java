@@ -1,94 +1,60 @@
 package com.peienxie.iso8583.type;
 
-import java.nio.ByteBuffer;
-import java.text.ParseException;
-
-import com.peienxie.iso8583.util.StringUtils;
-
 /**
  * TPDU (Transaction Protocol Data Unit) is a ISO8583 header
  */
 public class TPDU {
-    private static final int id = 0x60;
-    private final boolean isBinary;
-    private final int dst;
-    private final int src;
+    private final byte id = 0x60;
+    private final int destinationAddress;
+    private final int sourceAddress;
 
-    private TPDU(int dst, int src, boolean isBinary) {
-        this.dst = dst & 0xffff;
-        this.src = src & 0xffff;
-        this.isBinary = isBinary;
+    private TPDU(int destinationAddress, int sourceAddress) {
+        this.destinationAddress = destinationAddress;
+        this.sourceAddress = sourceAddress;
     }
 
     /**
      * creates TPDU by given destination address which shoule be a base 16 integer
      */
     public static TPDU of(int dst) {
-        return new TPDU(dst, 0, true);
+        return new TPDU(dst, 0);
     }
 
     /**
      * creates TPDU by given destination and source addresses which shoule be a base 16 integer
      */
     public static TPDU of(int dst, int src) {
-        return new TPDU(dst, src, true);
+        return new TPDU(dst, src);
     }
 
-    /**
-     * creates a TPDU by given destination and source addresses which should be a base 16 integer.
-     * if isBinary set to true, when getBytes() is called this object will format as binary type
-     * data or format as ASCII type data if set to false.
-     */
-    public static TPDU of(int dst, int src, boolean isBinary) {
-        return new TPDU(dst, src, isBinary);
+    public int getDestinationAddress() {
+        return destinationAddress;
+    }
+
+    public int getSourceAddress() {
+        return sourceAddress;
     }
 
     /**
      * converts this TPDU data into a byte array with following Format. the actual length of output
      * data is depends on isBinary field.
-     *
-     * <p>{0x60, 0x12, 0x34, 0x8a, 0x90} if given destination address is 0x1234 and source address
+     * <p>
+     * {0x60, 0x12, 0x34, 0x8a, 0x90} if given destination address is 0x1234 and source address
      * is 0x8a90.
-     *
-     * <p>if isBinary is set to true then getBytes() will output a 5 bytes length byte array. or
-     * output a 10 bytes length hex string when set to false.
      */
     public byte[] encode() {
-        byte[] bytes = {
+        return new byte[]{
                 id,
-                (byte) ((this.dst >>> 8) & 0xff),
-                (byte) (this.dst & 0xff),
-                (byte) ((this.src >>> 8) & 0xff),
-                (byte) (this.src & 0xff)
+                (byte) ((this.destinationAddress >>> 8) & 0xff),
+                (byte) (this.destinationAddress & 0xff),
+                (byte) ((this.sourceAddress >>> 8) & 0xff),
+                (byte) (this.sourceAddress & 0xff)
         };
-        return isBinary ? bytes : StringUtils.bytesToHexBytes(bytes);
     }
 
-    public TPDU parse(ByteBuffer buf) throws ParseException {
-        int expectLength = isBinary ? 5 : 10;
-
-        if (buf.remaining() < expectLength) {
-            throw new ParseException(
-                    "input length " + buf.remaining() + " is less than expect " + expectLength,
-                    buf.position());
-        }
-
-        byte[] bytes = new byte[expectLength];
-        buf.get(bytes);
-
-        if (isBinary) {
-            int dst = bytes[1] << 8 | (bytes[2] & 0xff);
-            int src = bytes[3] << 8 | (bytes[4] & 0xff);
-            return TPDU.of(dst, src);
-        } else {
-            byte[] tmp = StringUtils.hexStrToBytes(new String(bytes));
-            int dst = tmp[1] << 8 | (tmp[2] & 0xff);
-            int src = tmp[3] << 8 | (tmp[4] & 0xff);
-            return TPDU.of(dst, src);
-        }
-    }
-
-    public TPDU parse(byte[] bytes) throws ParseException {
-        return parse(ByteBuffer.wrap(bytes));
+    @Override
+    public String toString() {
+        return String.format("%s[0x%02X, 0x%04X, 0x%04X]",
+                TPDU.class.getSimpleName(), id, destinationAddress, sourceAddress);
     }
 }
