@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.peienxie.iso8583.codec.AlphaEncoder;
+import com.peienxie.iso8583.codec.AmountEncoder;
 import com.peienxie.iso8583.codec.FieldEncoder;
 import com.peienxie.iso8583.codec.NumericEncoder;
 import com.peienxie.iso8583.type.MTI;
@@ -75,7 +76,7 @@ public class ISO8583MessageFactoryTest {
         // given
         int amount = 100;
         ISO8583Message sale = saleFactory.make(
-                msg -> msg.addField(4, amount, new NumericEncoder(6))
+                msg -> msg.addField(4, amount, new AmountEncoder())
                         .addField(11, 123456, new NumericEncoder(3))
         );
 
@@ -84,7 +85,7 @@ public class ISO8583MessageFactoryTest {
 
         // then
         assertThat(StringUtils.bytesToHexStr(encode), is(
-                "601234000002003038010000C00000000000000000000100123456101121222312343837363534333231313233343535343332313132333435"
+                "601234000002003038010000C00000000000000000010000123456101121222312343837363534333231313233343535343332313132333435"
         ));
     }
 
