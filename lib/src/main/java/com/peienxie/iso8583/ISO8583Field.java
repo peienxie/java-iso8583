@@ -13,9 +13,18 @@ import com.peienxie.iso8583.codec.FieldEncoder;
  */
 public class ISO8583Field<T> {
 
+    /**
+     * The encoder used to encode the field data.
+     */
     private final FieldEncoder<T> encoder;
+    /**
+     * The decoder used to decode the field data.
+     */
     private final FieldDecoder<T> decoder;
 
+    /**
+     * The data to be encoded and decoded.
+     */
     private T data;
 
     /**
@@ -60,21 +69,18 @@ public class ISO8583Field<T> {
         return decoder != null;
     }
 
-    public FieldDecoder<T> getDecoder() {
-        return decoder;
-    }
-
     public T getData() {
         return data;
     }
 
     /**
-     * Writes the encoded form of this ISO8583 field to the specified byte buffer.
+     * Encodes the data in this field using the associated encoder.
      *
+     * @return the encoded form of this field
      * @throws IllegalStateException if the encoder is null
      */
     public byte[] encode() {
-        if (!hasEncoder()) {
+        if (encoder == null) {
             throw new IllegalStateException("Encoder is null");
         }
 
@@ -82,15 +88,13 @@ public class ISO8583Field<T> {
     }
 
     /**
-     * Reads the encoded form of this object from the specified byte buffer and
-     * updates the state of this object.
-     * <p>
-     * The position of the byte buffer is updated to reflect the number of bytes read.
+     * Decodes the data in this field using the associated decoder.
      *
+     * @param buffer the buffer containing the encoded data
      * @throws IllegalStateException if the decoder is null
      */
     public void decode(ByteBuffer buffer) {
-        if (!hasDecoder()) {
+        if (decoder == null) {
             throw new IllegalStateException("Decoder is null");
         }
 
