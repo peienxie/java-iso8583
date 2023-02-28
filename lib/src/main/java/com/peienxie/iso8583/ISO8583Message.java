@@ -113,14 +113,14 @@ public class ISO8583Message {
     }
 
     /**
-     * Checks if the provided field index is between 2 and 64.
+     * Checks if the provided field index is between 1 and 64.
      *
      * @param index the index number of data fields
-     * @throws IllegalArgumentException when the given index is not between 2 and 64
+     * @throws IllegalArgumentException when the given index is not between 1 and 64
      */
     private void checkFieldIndex(int index) {
-        if (index < 2 || index > 64) {
-            throw new IllegalArgumentException("The index number must be between 2 and 64");
+        if (index < 1 || index > 64) {
+            throw new IllegalArgumentException("The index number must be between 1 and 64");
         }
     }
 }
