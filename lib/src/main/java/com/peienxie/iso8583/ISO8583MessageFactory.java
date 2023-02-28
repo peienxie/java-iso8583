@@ -8,9 +8,9 @@ import com.peienxie.iso8583.type.MTI;
 import com.peienxie.iso8583.type.TPDU;
 
 /**
- * Factory for creating ISO 8583 messages.
+ * Factory for creating ISO8583 messages.
  */
-public class ISO8583Factory {
+public class ISO8583MessageFactory {
     /**
      * The TPDU (Transport Protocol Data Unit) to include in the message header.
      */
@@ -27,13 +27,13 @@ public class ISO8583Factory {
     private final Map<Integer, ISO8583Field<?>> fieldMap;
 
     /**
-     * Constructs a new ISO8583Factory with the given TPDU, MTI, and field map.
+     * Constructs a new ISO8583MessageFactory with the given TPDU, MTI, and field map.
      *
      * @param tpdu     the TPDU to include in the message header
      * @param mti      the MTI to include in the message header
      * @param fieldMap the map of ISO 8583 fields to include in the message body
      */
-    public ISO8583Factory(TPDU tpdu, MTI mti, Map<Integer, ISO8583Field<?>> fieldMap) {
+    public ISO8583MessageFactory(TPDU tpdu, MTI mti, Map<Integer, ISO8583Field<?>> fieldMap) {
         this.tpdu = tpdu;
         this.mti = mti;
         this.fieldMap = new TreeMap<>(fieldMap);

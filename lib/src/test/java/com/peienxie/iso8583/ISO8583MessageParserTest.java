@@ -9,13 +9,13 @@ import com.peienxie.iso8583.codec.NumericDecoder;
 import com.peienxie.iso8583.util.StringUtils;
 import org.junit.Test;
 
-public class ISO8583ParserTest {
+public class ISO8583MessageParserTest {
 
     @Test(expected = IllegalStateException.class)
     public void testParse_shouldThrow_whenDecoderIsMissing() {
         // given
         byte[] bytes = StringUtils.hexStrToBytes("601234567802003000000000000000");
-        ISO8583Parser parser = new ISO8583Parser(true, true);
+        ISO8583MessageParser parser = new ISO8583MessageParser(true, true);
 
         // when
         parser.parse(bytes);
@@ -27,7 +27,7 @@ public class ISO8583ParserTest {
     public void testParseOK() {
         // given
         byte[] bytes = StringUtils.hexStrToBytes("601234567802003000000000C000001200000000001234003132333435363738303132333435363738393031323334");
-        ISO8583Parser parser = new ISO8583Parser(true, true);
+        ISO8583MessageParser parser = new ISO8583MessageParser(true, true);
         parser.addField(3, ISO8583Field.response(new NumericDecoder(3)));
         parser.addField(4, ISO8583Field.response(new NumericDecoder(6)));
         parser.addField(41, ISO8583Field.response(new AlphaDecoder(8)));

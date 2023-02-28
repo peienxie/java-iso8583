@@ -17,9 +17,9 @@ import com.peienxie.iso8583.util.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ISO8583FactoryTest {
+public class ISO8583MessageFactoryTest {
 
-    private ISO8583Factory saleFactory;
+    private ISO8583MessageFactory saleFactory;
 
     @Before
     public void setup() {
@@ -67,7 +67,7 @@ public class ISO8583FactoryTest {
         defaultFields.put(41, ISO8583Field.request("87654321", new AlphaEncoder(8)));
         defaultFields.put(42, ISO8583Field.request("123455432112345", new AlphaEncoder(15)));
 
-        saleFactory = new ISO8583Factory(tpdu, mti, defaultFields);
+        saleFactory = new ISO8583MessageFactory(tpdu, mti, defaultFields);
     }
 
     @Test

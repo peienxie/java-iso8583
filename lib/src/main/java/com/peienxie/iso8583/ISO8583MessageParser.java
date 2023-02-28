@@ -10,7 +10,7 @@ import com.peienxie.iso8583.type.TPDU;
 /**
  * The ISO8583 parser that can parse the byte array to ISO8583 message.
  */
-public class ISO8583Parser {
+public class ISO8583MessageParser {
     /**
      * Determines whether to parse the TPDU.
      */
@@ -27,12 +27,12 @@ public class ISO8583Parser {
     private final Map<Integer, ISO8583Field<?>> fieldMap;
 
     /**
-     * Creates a new instance of the ISO8583Parser.
+     * Creates a new instance of the ISO8583MessageParser.
      *
      * @param parseTpdu if true, the TPDU will be parsed from the input byte array
      * @param parseMti  if true, the MTI will be parsed from the input byte array
      */
-    public ISO8583Parser(boolean parseTpdu, boolean parseMti) {
+    public ISO8583MessageParser(boolean parseTpdu, boolean parseMti) {
         this.parseTpdu = parseTpdu;
         this.parseMti = parseMti;
         this.fieldMap = new TreeMap<>();
